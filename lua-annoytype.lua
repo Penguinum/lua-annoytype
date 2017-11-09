@@ -1,13 +1,11 @@
 #!/usr/bin/env lua
 
-local tlast = require "typedlua.tlast"
-local tlparser = require "typedlua.tlparser"
-local tlchecker = require "typedlua.tlchecker"
-local tlcode = require "typedlua.tlcode"
+local tlast = require "annoy.tlast"
+local tlparser = require "annoy.tlparser"
+local tlchecker = require "annoy.tlchecker"
+local tlcode = require "annoy.tlcode"
 
-local VERSION = "scm"
-local PROGNAME = "tlc"
-local OUTPUT
+local PROGNAME = "lua-annnoytype"
 
 local DUMPAST = false
 local PRINTAST = false
@@ -25,11 +23,9 @@ usage: %s [options] [filename]
 Available options are:
 -h       print this help
 -d name  dump the AST (after typechecking) to file 'name'
--o name  output to file 'name' (default is '%s')
 -c       ansi colors on
 -p       print the AST in Metalua format (before typechecking)
 -s       strict mode on
--v       print current version
 -w       warnings on (consistent-subtyping, unused locals)
 ]]
 
@@ -37,7 +33,7 @@ local function usage (msg)
   if msg then
     io.stderr:write(string.format("%s: %s\n", progname, msg))
   end
-  io.stderr:write(string.format(USAGE, progname, "tlc.lua"))
+  io.stderr:write(string.format(USAGE, progname))
   os.exit(1)
 end
 
@@ -62,26 +58,12 @@ local function doargs ()
           end
         elseif option_char == "h" then
           usage()
-        elseif option_char == "o" then
-          if j ~= #arg[i] then
-            usage("'-o' appears last in option block")
-          end
-          i = i + 1
-          if arg[i] == nil or string.find(arg[i], "^-") then
-            usage("'-o' needs argument")
-          else
-            OUTPUT = arg[i]
-            break
-          end
         elseif option_char == "c" then
           COLOR = true
         elseif option_char == "p" then
           PRINTAST = true
         elseif option_char == "s" then
           STRICT = true
-        elseif option_char == "v" then
-          io.write(string.format("Typed Lua %s\n", VERSION))
-          os.exit(0)
         elseif option_char == "w" then
           WARNINGS = true
         else
@@ -118,11 +100,6 @@ if i < #arg then
   io.stderr:write(string.format("%s: Ignored extra arguments (%s)\n", progname, table.concat(arg, ", ", i+1, #arg)))
 end
 
-if not OUTPUT then
-  local name_part = filename:match("(.*)[.]tl$") or "tlc"
-  OUTPUT = name_part .. ".lua"
-end
-
 local subject = getcontents(filename)
 
 local ast, error_msg = tlparser.parse(subject, filename, STRICT, INTEGER)
@@ -139,11 +116,6 @@ error_msg = tlchecker.typecheck(ast, subject, filename, STRICT, INTEGER, COLOR)
 local status
 error_msg, status = tlchecker.error_msgs(error_msg, WARNINGS, COLOR, true)
 if error_msg then print(error_msg) end
-
-if status == 0 then
-  local generated_code = tlcode.generate(ast)
-  setcontents(generated_code, OUTPUT)
-end
 
 if DUMPAST then
   local out = assert(io.open(DUMPAST, "w+"))

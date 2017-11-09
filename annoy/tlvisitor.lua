@@ -2,7 +2,7 @@
 This module implements a visitor for the Typed Lua AST.
 ]]
 
-local tltype = require "typedlua.tltype"
+local tltype = require "annoy.tltype"
 
 local tlvisitor = {}
 

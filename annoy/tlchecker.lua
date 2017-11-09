@@ -6,12 +6,12 @@ local unpack = table.unpack or unpack
 
 local tlchecker = {}
 
-local tlast = require "typedlua.tlast"
-local tlst = require "typedlua.tlst"
-local tltype = require "typedlua.tltype"
-local tlparser = require "typedlua.tlparser"
-local tldparser = require "typedlua.tldparser"
-local tlfilter = require "typedlua.tlfilter"
+local tlast = require "annoy.tlast"
+local tlst = require "annoy.tlst"
+local tltype = require "annoy.tltype"
+local tlparser = require "annoy.tlparser"
+local tldparser = require "annoy.tldparser"
+local tlfilter = require "annoy.tlfilter"
 
 local Value = tltype.Value()
 local Any = tltype.Any()
@@ -1898,7 +1898,7 @@ function check_block (env, block, loop)
 end
 
 local function load_lua_env (env)
-  local path = "typedlua/"
+  local path = "annoy/"
   local l = {}
   if _VERSION == "Lua 5.1" then
     path = path .. "lsl51/"

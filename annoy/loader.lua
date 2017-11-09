@@ -8,9 +8,9 @@ local lua_loadstring, lua_load, lua_loadfile, lua_dofile, lua_searchpath = loads
 -- Typed Lua compiler
 -------------------------------------------------------------------------------
 
-local tlparser  = require "typedlua.tlparser"
-local tlchecker = require "typedlua.tlchecker"
-local tlcode    = require "typedlua.tlcode"
+local tlparser  = require "annoy.tlparser"
+local tlchecker = require "annoy.tlchecker"
+local tlcode    = require "annoy.tlcode"
 
 local COLOR = false
 
@@ -108,7 +108,7 @@ local function create_load (loadstring_func, default_chunkname)
   return function (ld, chunkname, ...)
     if type(ld) == "function" then
       local chunk = ""
-      
+
       repeat
         local piece = ld()
 	if piece == "" then

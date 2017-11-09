@@ -73,7 +73,7 @@ base: 'boolean' | 'number' | 'string'
 field: `TField{ <string> type }
 ]]
 
-local tltype = require "typedlua.tltype"
+local tltype = require "annoy.tltype"
 
 local tlast = {}
 
@@ -281,9 +281,19 @@ function tlast.exprString (pos, str)
   return { tag = "String", pos = pos, [1] = str }
 end
 
+-- TODO Check if I'm doing it wrong (sure)
+function tlast.typeHint(pos, ...)
+  return { tag = "TypeHint", pos = pos, typelist = {...}}
+end
+
 -- exprFunction : (number, parlist, type|stat, stat?) -> (expr)
-function tlast.exprFunction (pos, parlist, rettype, stat)
-  return { tag = "Function", pos = pos, [1] = parlist, [2] = rettype, [3] = stat }
+function tlast.exprFunction (pos, parlist, argtypes, stat, ...)
+  for i, parameter in ipairs(parlist) do
+    parameter[2] = argtypes.typelist[i]
+  end
+  local rettype = argtypes.typelist[#argtypes.typelist] -- TODO move it from argtypes
+  local ret = { tag = "Function", pos = pos, [1] = parlist, [2] = rettype, [3] = stat }
+  return ret
 end
 
 -- exprTable : (number, field*) -> (expr)

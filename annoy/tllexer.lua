@@ -61,7 +61,7 @@ local LongString = Open * lpeg.C((lpeg.P(1) - CloseEQ)^0) * Close /
                    function (s, o) return s end
 
 local Comment = ((lpeg.P("--") * LongString) +
-                (lpeg.P("--") * lpeg.C((lpeg.P(1) - lpeg.P("\n"))^0))) /
+                (lpeg.P("--") * (1 - lpeg.P(">")) * lpeg.C((lpeg.P(1) - lpeg.P("\n"))^0))) /
                 function (s)
                   tllexer.comments[#tllexer.comments+1] = s
                   return
