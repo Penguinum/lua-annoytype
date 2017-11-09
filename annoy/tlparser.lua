@@ -224,10 +224,10 @@ local G = lpeg.P { "TypedLua";
                 tlast.identDots;
   TypeList = (lpeg.V("Type") * tllexer.symb(","))^0 * lpeg.V("Type")^-1,
   TypeHint = lpeg.Cp() * tllexer.symb("-->") * lpeg.V("TypeList") *
-            (tllexer.symb(":") * lpeg.V("RetType"))^-1 / tlast.typeHint,
-            FuncBody = lpeg.Cp() * tllexer.symb("(") * lpeg.V("ParList") * tllexer.symb(")") *
-                       (lpeg.V("TypeHint"))^-1 *
-                       lpeg.V("Block") * tllexer.kw("end") / tlast.exprFunction;
+            (tllexer.symb(":") * lpeg.V("RetType"))^-1 / tlast.typeHint, -- FIXME
+  FuncBody = lpeg.Cp() * tllexer.symb("(") * lpeg.V("ParList") * tllexer.symb(")") *
+             (lpeg.V("TypeHint"))^-1 *
+             lpeg.V("Block") * tllexer.kw("end") / tlast.exprFunction;
   FuncStat = lpeg.Cp() * (tllexer.kw("const") * lpeg.Cc(true) + lpeg.Cc(false)) *
              tllexer.kw("function") * lpeg.V("FuncName") * lpeg.V("FuncBody") /
              tlast.statFuncSet;
