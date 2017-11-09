@@ -1,3 +1,0 @@
-return {
-  typical = 1,
-}
