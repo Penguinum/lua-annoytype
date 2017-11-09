@@ -288,10 +288,13 @@ end
 
 -- exprFunction : (number, parlist, type|stat, stat?) -> (expr)
 function tlast.exprFunction (pos, parlist, argtypes, stat, ...)
-  for i, parameter in ipairs(parlist) do
-    parameter[2] = argtypes.typelist[i]
+  local rettype
+  if argtypes.typelist then
+    for i, parameter in ipairs(parlist) do
+      parameter[2] = argtypes.typelist[i]
+    end
+    rettype = argtypes.typelist[#argtypes.typelist] -- TODO move it from argtypes
   end
-  local rettype = argtypes.typelist[#argtypes.typelist] -- TODO move it from argtypes
   local ret = { tag = "Function", pos = pos, [1] = parlist, [2] = rettype, [3] = stat }
   return ret
 end
