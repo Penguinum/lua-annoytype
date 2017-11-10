@@ -1,2 +1,3 @@
-local function some_other_function(x, y)
+local function some_function(x, y) -- Should be no warnings
+  return 1
 end
