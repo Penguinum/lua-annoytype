@@ -1,4 +1,3 @@
-local inspect = require "inspect"
 --[[
 This module implements Typed Lua AST.
 This AST extends the AST format implemented by Metalua.
