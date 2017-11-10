@@ -233,7 +233,7 @@ local G = lpeg.P { "TypedLua";
   LocalFunc = lpeg.Cp() * tllexer.kw("function") *
               lpeg.V("Id") * lpeg.V("FuncBody") / tlast.statLocalrec;
   LocalAssign = lpeg.Cp() * lpeg.V("NameList") *
-                ((tllexer.symb("=") * lpeg.V("ExpList")) + lpeg.Ct(lpeg.Cc())) / tlast.statLocal;
+                ((tllexer.symb("=") * lpeg.V("ExpList")) * (lpeg.V("TypeHint")^-1) + lpeg.Ct(lpeg.Cc())) * (lpeg.V("TypeHint")^-1) / tlast.statLocal;
   LocalStat = tllexer.kw("local") *
               (lpeg.V("LocalTypeDec") + lpeg.V("LocalFunc") + lpeg.V("LocalAssign"));
   LabelStat = lpeg.Cp() * tllexer.symb("::") * tllexer.token(tllexer.Name, "Name") * tllexer.symb("::") / tlast.statLabel;

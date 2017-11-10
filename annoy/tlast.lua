@@ -1,3 +1,4 @@
+local inspect = require "inspect"
 --[[
 This module implements Typed Lua AST.
 This AST extends the AST format implemented by Metalua.
@@ -140,7 +141,20 @@ function tlast.statForin (pos, namelist, explist, block)
 end
 
 -- statLocal : (number, namelist, explist) -> (stat)
-function tlast.statLocal (pos, namelist, explist)
+function tlast.statLocal (pos, namelist, explist, typelist)
+  if typelist then
+    if #typelist.typelist == 1 then
+      for i, v in ipairs(namelist) do
+        v[2] = typelist.typelist[1]
+      end
+    else
+      for i, _type in ipairs(typelist.typelist) do
+        if namelist[i] then
+          namelist[i][2] = _type
+        end
+      end
+    end
+  end
   return { tag = "Local", pos = pos, [1] = namelist, [2] = explist }
 end
 
