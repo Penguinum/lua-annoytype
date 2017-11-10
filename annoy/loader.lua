@@ -176,7 +176,7 @@ tlloader.dofile   = create_dofile  (tlloader.loadfile)
 
 local function custom_loadstring (string, chunkname, ...)
   local ext = string.match(chunkname, "%.([^%.\\/]*)$")
-  if ext == "tl" then
+  if ext == "lua" then
     return tlloader.loadstring(string, chunkname, ...)
   else
     return lua_loadstring(string, chunkname, ...)
