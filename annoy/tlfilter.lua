@@ -61,8 +61,11 @@ function tlfilter.filter_falsy(t)
       if tltype.isNil(tt) or tltype.isFalse(tt) then
         lf[#lf+1] = tt
       elseif tltype.isBoolean(tt) then
-        lf[#lf+1] = tltype.isFalse()
-        l[#l+1] = tltype.isTrue()
+        -- TODO make sure it does really work correctly now
+        -- See issue for details: https://github.com/andremm/typedlua/issues/108
+        lf[#lf+1] = tltype.False()
+        l[#l+1] = tltype.True()
+        --
       else
         l[#l+1] = tt
       end
