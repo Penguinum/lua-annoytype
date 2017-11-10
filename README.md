@@ -21,6 +21,11 @@ end
 be used at the moment.
 Comment format is to be changed (as well as project name).
 
+# Requirements
+
+1. Lua >= 5.1
+2. [LPeg](http://www.inf.puc-rio.br/%7Eroberto/lpeg/) >= 0.12
+
 
 # License
 
