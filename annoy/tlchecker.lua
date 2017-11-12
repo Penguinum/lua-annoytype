@@ -6,6 +6,8 @@ local unpack = table.unpack or unpack
 
 local tlchecker = {}
 
+local moonscript = require "moonyscript"
+
 local tlast = require "annoy.tlast"
 local tlst = require "annoy.tlst"
 local tltype = require "annoy.tltype"
@@ -297,6 +299,28 @@ local function check_tl (env, name, path, pos)
   return t1
 end
 
+local function check_tm (env, name, path, pos)
+  local file = io.open(path, "r")
+  local subject_moon = file:read("*a")
+  local s, f = env.subject, env.filename
+  io.close(file)
+  local subject = moonscript.compile(subject_moon)
+  local ast, msg = tlparser.parse(subject, path, env.strict, env.integer)
+  if not ast then
+    typeerror(env, "syntax", msg, pos)
+    return Any
+  end
+  env.subject = subject
+  env.filename = path
+  tlst.begin_function(env)
+  check_block(env, ast)
+  local t1 = tltype.first(infer_return_type(env))
+  tlst.end_function(env)
+  env.subject = s
+  env.filename = f
+  return t1
+end
+
 local function check_interface (env, stm)
   local name, t, is_local = stm[1], stm[2], stm.is_local
   if tlst.get_interface(env, name) then
@@ -364,21 +388,34 @@ local function check_require (env, name, pos, extra_path)
         env["loaded"][name] = Any
       end
     else
-      path = string.gsub(package.path..";", "[.]lua;", ".tld;")
-      local msg2
-      filepath, msg2 = searchpath(extra_path .. name, path)
+      local moonpath = string.gsub(package.path..";", "[.]lua;", ".moon;")
+      local msg_moon
+      filepath, msg_moon = searchpath(extra_path .. name, moonpath)
       if filepath then
-        env["loaded"][name] = check_tld(env, name, filepath, pos)
+        if not env.parent[name] then
+          env.parent[name] = true
+          env["loaded"][name] = check_tm(env, name, filepath, pos)
+        else
+          typeerror(env, "load", "circular require", pos)
+          env["loaded"][name] = Any
+        end
       else
-        env["loaded"][name] = Any
-        local s, m = pcall(require, name)
-        if not s then
-          if string.find(m, "syntax error") then
-            typeerror(env, "syntax", m, pos)
-          else
-            local msg = "could not load '%s'%s%s%s"
-            msg = string.format(msg, name, msg1, msg2, m)
-            typeerror(env, "load", msg, pos)
+        path = string.gsub(package.path..";", "[.]lua;", ".tld;")
+        local msg2
+        filepath, msg2 = searchpath(extra_path .. name, path)
+        if filepath then
+          env["loaded"][name] = check_tld(env, name, filepath, pos)
+        else
+          env["loaded"][name] = Any
+          local s, m = pcall(require, name)
+          if not s then
+            if string.find(m, "syntax error") then
+              typeerror(env, "syntax", m, pos)
+            else
+              local msg = "could not load '%s'%s%s%s"
+              msg = string.format(msg, name, msg1, msg2, m)
+              typeerror(env, "load", msg, pos)
+            end
           end
         end
       end

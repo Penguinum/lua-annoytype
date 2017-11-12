@@ -1,5 +1,6 @@
 #!/usr/bin/env lua
 
+local moonscript = require "moonyscript"
 local tlast = require "annoy.tlast"
 local tlparser = require "annoy.tlparser"
 local tlchecker = require "annoy.tlchecker"
@@ -101,6 +102,9 @@ if i < #arg then
 end
 
 local subject = getcontents(filename)
+if filename:match(".+%.moon$") then
+  subject = moonscript.compile(subject)
+end
 
 local ast, error_msg = tlparser.parse(subject, filename, STRICT, INTEGER)
 if not ast then
