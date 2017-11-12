@@ -6,7 +6,7 @@ local tlparser = require "annoy.tlparser"
 local tlchecker = require "annoy.tlchecker"
 local tlcode = require "annoy.tlcode"
 
-local PROGNAME = "lua-annnoytype"
+local PROGNAME = "lua-annoytype"
 
 local DUMPAST = false
 local PRINTAST = false
